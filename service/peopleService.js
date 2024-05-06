@@ -53,10 +53,17 @@ const updatePeople = (req, res) => {
   }
 };
 
+const uploadImageHandler = (req, res) => {
+    const url = `/uploads/${req.file.filename}`
+
+    res.status(200).json({message: "upload ", url})
+}
+
 module.exports = {
   getPeople,
   getPeopleById,
   createPeople,
   deletePeople,
   updatePeople,
+  uploadImageHandler
 };
