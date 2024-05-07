@@ -1,4 +1,5 @@
 const data = require("../data/people");
+const cloudinary = require("../middleware/cloudinary");
 
 const getPeople = (req, res) => {
   res.status(200).json({ message: "Success", data });
@@ -54,10 +55,25 @@ const updatePeople = (req, res) => {
 };
 
 const uploadImageHandler = (req, res) => {
-    const url = `/uploads/${req.file.filename}`
+  const url = `/uploads/${req.file.filename}`;
 
-    res.status(200).json({message: "upload ", url})
-}
+  res.status(200).json({ message: "upload ", url });
+};
+
+const cdnUploadImageHandler = (req, res) => {
+  const fileBase64 = req.file.buffer.toString("base64");
+  const file = `data:${req.file.mimetype};base64,${fileBase64}`;
+
+  cloudinary.uploader.upload(file, function(err, result){
+    if (!!err) {
+      return res.status(400).json({
+        message: "Gagal Upload File!",
+      });
+    }
+
+    res.status(201).json({ message: "Uploaded!", url: result.url });
+  });
+};
 
 module.exports = {
   getPeople,
@@ -65,5 +81,6 @@ module.exports = {
   createPeople,
   deletePeople,
   updatePeople,
-  uploadImageHandler
+  uploadImageHandler,
+  cdnUploadImageHandler,
 };
